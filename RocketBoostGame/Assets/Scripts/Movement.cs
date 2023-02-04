@@ -6,27 +6,21 @@ public class Movement : MonoBehaviour
 {
     Rigidbody myRigidbody;
     Transform myTransform;
-    // Rocket speed variable
-    [SerializeField] float pushSpeed = 100f;
-    // Rocket rotation speed variable
-    [SerializeField] float rotateSpeed = 100f;
+    [SerializeField] float pushSpeed = 100f; // Rocket speed variable
+    [SerializeField] float rotateSpeed = 100f; // Rocket rotation speed variable
 
     // Start is called before the first frame update
     void Start()
     {
-        // Getting access to the rigidbody
-        myRigidbody = GetComponent<Rigidbody>();
-        // Getting access to the transform
-        myTransform= GetComponent<Transform>();
+        myRigidbody = GetComponent<Rigidbody>(); // Getting access to the rigidbody
+        myTransform = GetComponent<Transform>(); // Getting access to the transform
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Pushing rocket
-        ProcessThrust();
-        // Rotating rocket
-        ProcessRotation();
+        ProcessThrust(); // Pushing rocket
+        ProcessRotation(); // Rotating rocket
     }
 
     void ProcessThrust()
@@ -44,20 +38,19 @@ public class Movement : MonoBehaviour
         // Checking if A key is pressed
         if (Input.GetKey(KeyCode.A))
         {
-            // Rotating rocket to the left
-            ApplyRotation(rotateSpeed);
+            ApplyRotation(rotateSpeed); // Rotating rocket to the left
         }
         // Checking if D key is pressed
         else if (Input.GetKey(KeyCode.D))
         {
-            // Rotating rocket to the right
-            ApplyRotation(-rotateSpeed);
+            ApplyRotation(-rotateSpeed); // Rotating rocket to the right
         }
     }
 
     void ApplyRotation(float rotation)
     {
-        // Rotating rocket
-        myTransform.Rotate(rotation * Time.deltaTime * Vector3.forward);
+        myRigidbody.freezeRotation = true; // Freezing rotation so we can manually rotate
+        myTransform.Rotate(rotation * Time.deltaTime * Vector3.forward); // Rotating rocket
+        myRigidbody.freezeRotation = false; // Unfreeze rotation
     }
 }
