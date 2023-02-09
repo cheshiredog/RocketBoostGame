@@ -16,6 +16,9 @@ public class Movement : MonoBehaviour
         myRigidbody = GetComponent<Rigidbody>(); // Getting access to the rigidbody
         myTransform = GetComponent<Transform>(); // Getting access to the transform
         myAudioSource = GetComponent<AudioSource>(); // Getting access to the audio source
+        myAudioSource.mute = true; // Muting rocket sound
+        myAudioSource.Play(); // Starting playing rocket sound
+
     }
 
     // Update is called once per frame
@@ -60,14 +63,14 @@ public class Movement : MonoBehaviour
     void PlayRocketAudio() // Playing rocket boost audio
     {
         // Checking if rocket is boosted
-        if (Input.GetKey(KeyCode.Space) && !myAudioSource.isPlaying)
+        if (Input.GetKey(KeyCode.Space) && myAudioSource.mute)
         {
-            myAudioSource.Play(); //Playing audio
+            myAudioSource.mute = false; //Playing audio
         }
         // Checking if rocket isn't boosted
-        else if (!Input.GetKey(KeyCode.Space) && myAudioSource.isPlaying)
+        else if (!Input.GetKey(KeyCode.Space))
         {
-            myAudioSource.Stop(); //Stop playing audio
+            myAudioSource.mute = true; //Stop playing audio
         }
     }
 }
