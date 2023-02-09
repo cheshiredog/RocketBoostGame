@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Launch Pad
       objectReference: {fileID: 0}
+    - target: {fileID: 1046367472761814534, guid: 58d9ccad119fe474d86d0dde185bf919, type: 3}
+      propertyPath: m_TagString
+      value: Friendly
+      objectReference: {fileID: 0}
     - target: {fileID: 6670026422783798496, guid: 58d9ccad119fe474d86d0dde185bf919, type: 3}
       propertyPath: m_RootOrder
       value: 0

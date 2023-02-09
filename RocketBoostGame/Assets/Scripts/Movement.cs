@@ -6,6 +6,7 @@ public class Movement : MonoBehaviour
 {
     Rigidbody myRigidbody;
     Transform myTransform;
+    AudioSource myAudioSource;
     [SerializeField] float pushSpeed = 100f; // Rocket speed variable
     [SerializeField] float rotateSpeed = 100f; // Rocket rotation speed variable
 
@@ -14,6 +15,10 @@ public class Movement : MonoBehaviour
     {
         myRigidbody = GetComponent<Rigidbody>(); // Getting access to the rigidbody
         myTransform = GetComponent<Transform>(); // Getting access to the transform
+        myAudioSource = GetComponent<AudioSource>(); // Getting access to the audio source
+        myAudioSource.mute = true; // Muting rocket sound
+        myAudioSource.Play(); // Starting playing rocket sound
+
     }
 
     // Update is called once per frame
@@ -21,9 +26,10 @@ public class Movement : MonoBehaviour
     {
         ProcessThrust(); // Pushing rocket
         ProcessRotation(); // Rotating rocket
+        PlayRocketAudio(); // Playing rocket boost audio
     }
 
-    void ProcessThrust()
+    void ProcessThrust() // Pushing rocket
     {
         // Checking if space is pressed
         if (Input.GetKey(KeyCode.Space))
@@ -33,7 +39,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void ProcessRotation()
+    void ProcessRotation() // Rotating rocket
     {
         // Checking if A key is pressed
         if (Input.GetKey(KeyCode.A))
@@ -47,10 +53,24 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void ApplyRotation(float rotation)
+    void ApplyRotation(float rotation) // Rotating rocket in some direction
     {
         myRigidbody.freezeRotation = true; // Freezing rotation so we can manually rotate
         myTransform.Rotate(rotation * Time.deltaTime * Vector3.forward); // Rotating rocket
         myRigidbody.freezeRotation = false; // Unfreeze rotation
+    }
+
+    void PlayRocketAudio() // Playing rocket boost audio
+    {
+        // Checking if rocket is boosted
+        if (Input.GetKey(KeyCode.Space) && myAudioSource.mute)
+        {
+            myAudioSource.mute = false; //Playing audio
+        }
+        // Checking if rocket isn't boosted
+        else if (!Input.GetKey(KeyCode.Space))
+        {
+            myAudioSource.mute = true; //Stop playing audio
+        }
     }
 }
