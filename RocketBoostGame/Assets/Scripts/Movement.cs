@@ -18,7 +18,6 @@ public class Movement : MonoBehaviour
         myAudioSource = GetComponent<AudioSource>(); // Getting access to the audio source
         myAudioSource.mute = true; // Muting rocket sound
         myAudioSource.Play(); // Starting playing rocket sound
-
     }
 
     // Update is called once per frame
