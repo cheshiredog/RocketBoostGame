@@ -70,7 +70,6 @@ public class Movement : MonoBehaviour
         else if (!Input.GetKey(KeyCode.Space))
         {
             myAudioSource.mute = true; //Stop playing audio
-
         }
     }
 }
