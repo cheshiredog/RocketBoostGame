@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    [SerializeField] float pushSpeed = 500f; // Rocket speed variable
+    [SerializeField] float rotateSpeed = 100f; // Rocket rotation speed variable
+    [SerializeField] AudioClip rocketBoostSound; // Getting audio clip from the editor
+
     Rigidbody myRigidbody;
     Transform myTransform;
     AudioSource myAudioSource;
-    [SerializeField] float pushSpeed = 100f; // Rocket speed variable
-    [SerializeField] float rotateSpeed = 100f; // Rocket rotation speed variable
 
     // Start is called before the first frame update
     void Start()
@@ -16,8 +18,6 @@ public class Movement : MonoBehaviour
         myRigidbody = GetComponent<Rigidbody>(); // Getting access to the rigidbody
         myTransform = GetComponent<Transform>(); // Getting access to the transform
         myAudioSource = GetComponent<AudioSource>(); // Getting access to the audio source
-        myAudioSource.mute = true; // Muting rocket sound
-        myAudioSource.Play(); // Starting playing rocket sound
     }
 
     // Update is called once per frame
@@ -25,7 +25,6 @@ public class Movement : MonoBehaviour
     {
         ProcessThrust(); // Pushing rocket
         ProcessRotation(); // Rotating rocket
-        PlayRocketAudio(); // Playing rocket boost audio
     }
 
     void ProcessThrust() // Pushing rocket
@@ -33,8 +32,18 @@ public class Movement : MonoBehaviour
         // Checking if space is pressed
         if (Input.GetKey(KeyCode.Space))
         {
-            // Pushing rocket upwards by y-axis, if space is pressed
-            myRigidbody.AddRelativeForce(pushSpeed * Time.deltaTime * Vector3.up);
+            myRigidbody.AddRelativeForce(pushSpeed * Time.deltaTime * Vector3.up); // Pushing rocket upwards by y-axis, if space is pressed
+
+            // Checking if nothing is playing
+            if (!myAudioSource.isPlaying)
+            {
+                myAudioSource.PlayOneShot(rocketBoostSound); // Starting playing rocket sound
+            }
+        }
+
+        else
+        {
+            myAudioSource.Stop(); // Stopping rocket sound
         }
     }
 
@@ -57,19 +66,5 @@ public class Movement : MonoBehaviour
         myRigidbody.freezeRotation = true; // Freezing rotation so we can manually rotate
         myTransform.Rotate(rotation * Time.deltaTime * Vector3.forward); // Rotating rocket
         myRigidbody.freezeRotation = false; // Unfreeze rotation
-    }
-
-    void PlayRocketAudio() // Playing rocket boost audio
-    {
-        // Checking if rocket is boosted
-        if (Input.GetKey(KeyCode.Space) && myAudioSource.mute)
-        {
-            myAudioSource.mute = false; //Playing audio
-        }
-        // Checking if rocket isn't boosted
-        else if (!Input.GetKey(KeyCode.Space))
-        {
-            myAudioSource.mute = true; //Stop playing audio
-        }
     }
 }
