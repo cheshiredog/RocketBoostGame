@@ -4,29 +4,49 @@ using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     [SerializeField] float delayBeforeLoading = 1.0f; // Setting up the time of the delay before loading or reloading
+    [SerializeField] float soundVolume = 1f; // Setting up the the sound volume
+    [SerializeField] AudioClip successSound; // Getting the success sound from the editor
+    [SerializeField] AudioClip crashSound; // Getting the crash sound from the editor
 
-    private void OnCollisionEnter(Collision collision) // Calls when rocket bumped into something
+    AudioSource audioSource; // Cashing audio source
+
+    bool isTransitioning = false; // Has the process of the loading or the reloading level started?
+
+    // Start is called before the first frame update
+    private void Start()
     {
-        // What is the object which the rocket bumped into?
-        switch (collision.gameObject.tag)
+        audioSource = GetComponent<AudioSource>(); // Getting access to the audio source
+    }
+
+    // Calls when rocket bumped into something
+    private void OnCollisionEnter(Collision collision) 
+    {
+        // Checking if the process of the loading or the reloading has already started
+        if (!isTransitioning)
         {
-            case "Friendly": // If object is friendly
-                Debug.Log("Friendly");
-                break;
+            // What is the object which the rocket bumped into?
+            switch (collision.gameObject.tag)
+            {
+                case "Friendly": // If object is friendly
+                    Debug.Log("Friendly");
+                    break;
 
-            case "Finish": // If object is finish
-                StartLevelEnding(nameof(LoadNextLevel)); // Loading the next level
-                break;
+                case "Finish": // If object is finish
+                    StartLevelEnding(nameof(LoadNextLevel), successSound); // Loading the next level
+                    break;
 
-            default: // If object is obstacle
-                StartLevelEnding(nameof(LevelReload)); // The player lost so we reload this level
-                break;
+                default: // If object is obstacle
+                    StartLevelEnding(nameof(LevelReload), crashSound); // The player lost so we reload this level
+                    break;
+            }
         }
     }
 
-    void StartLevelEnding(string loadOrReload) // Starting the end of the level process
+    void StartLevelEnding(string loadOrReload, AudioClip crashOrSuccessSound) // Starting the end of the level process
     {
-        gameObject.GetComponent<AudioSource>().Stop(); // Turning off the rocket boost sound
+        isTransitioning = true; // Marking that the process of the loading or the reloading has already started
+        audioSource.Stop(); // Turning off the rocket boost sound
+        audioSource.PlayOneShot(crashOrSuccessSound, soundVolume); // Playing the success or the crash sound
         gameObject.GetComponent<Movement>().enabled = false; // Turning off the rocket control
         Invoke(loadOrReload, delayBeforeLoading); // Reloading this level or loading the next level within a delay
     }

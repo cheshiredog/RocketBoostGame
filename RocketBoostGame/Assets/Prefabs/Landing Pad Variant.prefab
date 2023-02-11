@@ -19,6 +19,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Finish
       objectReference: {fileID: 0}
+    - target: {fileID: 5062484671128894262, guid: 58d9ccad119fe474d86d0dde185bf919, type: 3}
+      propertyPath: m_Size.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5062484671128894262, guid: 58d9ccad119fe474d86d0dde185bf919, type: 3}
+      propertyPath: m_Size.z
+      value: 1.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6670026422783798496, guid: 58d9ccad119fe474d86d0dde185bf919, type: 3}
       propertyPath: m_RootOrder
       value: 0
