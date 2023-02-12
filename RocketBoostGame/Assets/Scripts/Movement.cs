@@ -7,6 +7,9 @@ public class Movement : MonoBehaviour
     [SerializeField] float pushSpeed = 500f; // Rocket speed variable
     [SerializeField] float rotateSpeed = 100f; // Rocket rotation speed variable
     [SerializeField] AudioClip rocketBoostSound; // Getting audio clip from the editor
+    [SerializeField] ParticleSystem mainBoostParticles; // Getting the main boost particles from the editor
+    [SerializeField] ParticleSystem rightBoostParticles; // Getting the right boost particles from the editor
+    [SerializeField] ParticleSystem leftBoostParticles; // Getting the left boost particles from the editor
 
     Rigidbody myRigidbody;
     Transform myTransform;
@@ -33,17 +36,22 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             myRigidbody.AddRelativeForce(pushSpeed * Time.deltaTime * Vector3.up); // Pushing rocket upwards by y-axis, if space is pressed
-
-            // Checking if nothing is playing
+            // Checking if the main boost particles is not playing
+            if (!mainBoostParticles.isPlaying)
+            {
+                mainBoostParticles.Play(); // Starting playing the maing boost particles, if space is pressed
+            }
+            // Checking if no sound is playing
             if (!myAudioSource.isPlaying)
             {
                 myAudioSource.PlayOneShot(rocketBoostSound); // Starting playing rocket sound
             }
         }
-
+        // If space is not pressed
         else
         {
-            myAudioSource.Stop(); // Stopping rocket sound
+            myAudioSource.Stop(); // Stopping the rocket sound, if space is not pressed
+            mainBoostParticles.Stop(); // Stopping playing the main boost particles, if space is not pressed
         }
     }
 
@@ -52,12 +60,30 @@ public class Movement : MonoBehaviour
         // Checking if A key is pressed
         if (Input.GetKey(KeyCode.A))
         {
+            // Checking if the left boost particles is not playing
+            if (!leftBoostParticles.isPlaying)
+            {
+                leftBoostParticles.Play(); // Starting playing the left boost particles
+            }
+
             ApplyRotation(rotateSpeed); // Rotating rocket to the left
         }
         // Checking if D key is pressed
         else if (Input.GetKey(KeyCode.D))
         {
+            // Checking if the right boost particles is not playing
+            if (!rightBoostParticles.isPlaying)
+            {
+                rightBoostParticles.Play(); // Starting playing the right boost particles
+            }
+
             ApplyRotation(-rotateSpeed); // Rotating rocket to the right
+        }
+        // If neither A nor D pressed
+        else
+        {
+            leftBoostParticles.Stop(); // Stopping playing the left boost particles
+            rightBoostParticles.Stop(); // Stopping playing the right boost particles
         }
     }
 
