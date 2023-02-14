@@ -35,24 +35,34 @@ public class Movement : MonoBehaviour
         // Checking if space is pressed
         if (Input.GetKey(KeyCode.Space))
         {
-            myRigidbody.AddRelativeForce(pushSpeed * Time.deltaTime * Vector3.up); // Pushing rocket upwards by y-axis, if space is pressed
-            // Checking if the main boost particles is not playing
-            if (!mainBoostParticles.isPlaying)
-            {
-                mainBoostParticles.Play(); // Starting playing the maing boost particles, if space is pressed
-            }
-            // Checking if no sound is playing
-            if (!myAudioSource.isPlaying)
-            {
-                myAudioSource.PlayOneShot(rocketBoostSound); // Starting playing rocket sound
-            }
+            StartThrusting(); // Applying thrust
         }
         // If space is not pressed
         else
         {
-            myAudioSource.Stop(); // Stopping the rocket sound, if space is not pressed
-            mainBoostParticles.Stop(); // Stopping playing the main boost particles, if space is not pressed
+            StopThrustingAndPlayingAudio(); // Stopping thrusting and playing boost audio
         }
+    }
+
+    void StartThrusting() // Applying thrust
+    {
+        myRigidbody.AddRelativeForce(pushSpeed * Time.deltaTime * Vector3.up); // Pushing rocket upwards by y-axis, if space is pressed
+        // Checking if the main boost particles is not playing
+        if (!mainBoostParticles.isPlaying)
+        {
+            mainBoostParticles.Play(); // Starting playing the maing boost particles, if space is pressed
+        }
+        // Checking if no sound is playing
+        if (!myAudioSource.isPlaying)
+        {
+            myAudioSource.PlayOneShot(rocketBoostSound); // Starting playing rocket sound
+        }
+    }
+
+    void StopThrustingAndPlayingAudio() // Stopping thrusting and playing boost audio
+    {
+        myAudioSource.Stop(); // Stopping the rocket sound, if space is not pressed
+        mainBoostParticles.Stop(); // Stopping playing the main boost particles, if space is not pressed
     }
 
     void ProcessRotation() // Rotating rocket
@@ -60,30 +70,28 @@ public class Movement : MonoBehaviour
         // Checking if A key is pressed
         if (Input.GetKey(KeyCode.A))
         {
-            // Checking if the left boost particles is not playing
-            if (!leftBoostParticles.isPlaying)
-            {
-                leftBoostParticles.Play(); // Starting playing the left boost particles
-            }
-
+            ApplyingSideBoostParticles(leftBoostParticles); // Starting playing left boost particles
             ApplyRotation(rotateSpeed); // Rotating rocket to the left
         }
         // Checking if D key is pressed
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D)) 
         {
-            // Checking if the right boost particles is not playing
-            if (!rightBoostParticles.isPlaying)
-            {
-                rightBoostParticles.Play(); // Starting playing the right boost particles
-            }
-
+            ApplyingSideBoostParticles(rightBoostParticles); // Starting playing right boost particles
             ApplyRotation(-rotateSpeed); // Rotating rocket to the right
         }
         // If neither A nor D pressed
         else
         {
-            leftBoostParticles.Stop(); // Stopping playing the left boost particles
-            rightBoostParticles.Stop(); // Stopping playing the right boost particles
+            StopAnySideBoostParticles(); // Stopping the right and the left boost particles effects
+        }
+    }
+
+    private void ApplyingSideBoostParticles(ParticleSystem sideBoostParticles) // Starting playing side boost particles
+    {
+        // Checking if the side boost particles is not playing
+        if (!sideBoostParticles.isPlaying)
+        {
+            sideBoostParticles.Play(); // Starting playing the side boost particles
         }
     }
 
@@ -92,5 +100,11 @@ public class Movement : MonoBehaviour
         myRigidbody.freezeRotation = true; // Freezing rotation so we can manually rotate
         myTransform.Rotate(rotation * Time.deltaTime * Vector3.forward); // Rotating rocket
         myRigidbody.freezeRotation = false; // Unfreeze rotation
+    }
+
+    private void StopAnySideBoostParticles() // Stopping the right and the left boost particles effects
+    {
+        leftBoostParticles.Stop(); // Stopping playing the left boost particles
+        rightBoostParticles.Stop(); // Stopping playing the right boost particles
     }
 }
