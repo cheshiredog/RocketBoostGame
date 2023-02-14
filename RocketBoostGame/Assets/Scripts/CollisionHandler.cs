@@ -13,38 +13,63 @@ public class CollisionHandler : MonoBehaviour
     AudioSource audioSource; // Cashing audio source
 
     bool isTransitioning = false; // Has the process of the loading or the reloading level started?
+    bool collisionDisabled = false; // Is the collision enabled or disables?
 
     // Start is called before the first frame update
-    private void Start()
+    void Start()
     {
         audioSource = GetComponent<AudioSource>(); // Getting access to the audio source
     }
 
-    // Calls when rocket bumped into something
-    private void OnCollisionEnter(Collision collision) 
+    // Update is called once per frame
+    void Update()
     {
-        // Checking if the process of the loading or the reloading has already started
-        if (!isTransitioning)
+        RespondToDebugKeys(); // This method is responsible for debugging
+    }
+
+    // This method is responsible for debugging
+    void RespondToDebugKeys()
+    {
+        // Checking if L is pressed
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            // What is the object which the rocket bumped into?
-            switch (collision.gameObject.tag)
-            {
-                case "Friendly": // If object is friendly
-                    Debug.Log("Friendly");
-                    break;
-
-                case "Finish": // If object is finish
-                    StartLevelEnding(nameof(LoadNextLevel), successSound, successParticles); // Loading the next level
-                    break;
-
-                default: // If object is obstacle
-                    StartLevelEnding(nameof(LevelReload), crashSound, crashParticles); // The player lost so we reload this level
-                    break;
-            }
+            LoadNextLevel(); // Loading the next level
+        }
+        // Checking if C is pressed
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled; // Disabling collosions
         }
     }
 
-    void StartLevelEnding(string loadOrReload, AudioClip crashOrSuccessSound, ParticleSystem particles) // Starting the end of the level process
+    // Calls when rocket bumped into something
+    void OnCollisionEnter(Collision collision) 
+    {
+        // Checking if the process of the loading or the reloading has already started or if collision is disabled
+        if (isTransitioning || collisionDisabled) 
+        { 
+            return; // Stop executing OnCollisionEnter (this) method
+        }
+
+        // What is the object which the rocket bumped into?
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly": // If object is friendly
+                Debug.Log("Friendly");
+                break;
+
+            case "Finish": // If object is finish
+                StartLevelEnding(nameof(LoadNextLevel), successSound, successParticles); // Loading the next level
+                break;
+
+            default: // If object is obstacle
+                StartLevelEnding(nameof(LevelReload), crashSound, crashParticles); // The player lost so we reload this level
+                break;
+        }
+    }
+
+    // Starting the end of the level process
+    void StartLevelEnding(string loadOrReload, AudioClip crashOrSuccessSound, ParticleSystem particles) 
     {
         isTransitioning = true; // Marking that the process of the loading or the reloading has already started
         audioSource.Stop(); // Turning off the rocket boost sound
@@ -54,7 +79,8 @@ public class CollisionHandler : MonoBehaviour
         Invoke(loadOrReload, delayBeforeLoading); // Reloading this level or loading the next level within a delay
     }
 
-    void LoadNextLevel() // This method loads the next level
+    // This method loads the next level
+    void LoadNextLevel() 
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex; // Getting the index of the current level
         int nextSceneIndex = currentSceneIndex + 1; // Getting the index of the next level
@@ -68,7 +94,8 @@ public class CollisionHandler : MonoBehaviour
         SceneManager.LoadScene(nextSceneIndex); // Loading the next level
     }
 
-    void LevelReload() // This method reloads the current level
+    // This method reloads the current level
+    void LevelReload()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex; // Getting the index of the current level
         SceneManager.LoadScene(currentSceneIndex); // Loading the current level
